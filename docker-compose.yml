@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+  forwarder:
+    build: .
+    image: forwarder
+    environment:
+      - VK_TOKEN=your_vk_token
+      - TELEGRAM_TOKEN=your_telegram_token
+      - TELEGRAM_CHANNEL_ID=your_telegram_channel_id
+      - VK_GROUP_ID=123456
+    command: ["java", "-jar", "forwarder.jar"]
