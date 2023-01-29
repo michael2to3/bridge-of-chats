@@ -8,10 +8,12 @@ class BridgeOfChats {
     private final static Config config = new Config();
 
     public static void run() {
-        VkPlatform vk = new VkPlatform(config.get("vk.token"), Integer.parseInt(config.get("vk.groupid")));
+        VkPlatform vk = new VkPlatform(config.get("vk.token"));
         TelegramPlatform telegram = new TelegramPlatform("test", config.get("telegram.token"));
-        Linker vk2tg = new Linker(vk, telegram, "-218522752", "-495016909");
-        Linker tg2vk = new Linker(telegram, vk, "-495016909", "-218522752");
+        String vid = "2000000001";
+        String tid = "-495016909";
+        Linker vk2tg = new Linker(vk, telegram, vid, tid);
+        Linker tg2vk = new Linker(telegram, vk, tid, vid);
         var manager = new LinkerManager();
         manager.startLinker(vk2tg);
         manager.startLinker(tg2vk);
