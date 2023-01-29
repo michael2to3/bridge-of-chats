@@ -13,21 +13,20 @@ import api.longpoll.bots.model.events.messages.MessageNew;
 import bridge.chats.Object.Message;
 
 public class VkPlatform extends LongPollBot implements Platform {
-	private static final Logger logger = LoggerFactory.getLogger(VkPlatform.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(VkPlatform.class);
 	private static String TOKEN;
-	private List<Message> messages;
+	private final List<Message> messages = new ArrayList<>();
 	private Thread thread;
 
-	public VkPlatform(String token) {
+	public VkPlatform(final String token) {
 		TOKEN = token;
-		messages = new ArrayList<>();
 	}
 
 	@Override
-	public void onMessageNew(MessageNew messageNew) {
-		var message = messageNew.getMessage();
-		var sendMessage = new Message(new Date(message.getDate() * 1000L), message.getFromId().toString(),
-				message.getText(), "");
+	public void onMessageNew(final MessageNew messageNew) {
+		final var message = messageNew.getMessage();
+		final var sendMessage = new Message(new Date(message.getDate() * 1000L), message.getFromId().toString(),
+				message.getText());
 		messages.add(sendMessage);
 	}
 
@@ -38,35 +37,41 @@ public class VkPlatform extends LongPollBot implements Platform {
 
 	@Override
 	public void startPolling() {
-		if (!thread.isAlive() || thread == null) {
+		if (thread == null) {
 			thread = new Thread(() -> {
 				try {
+					LOGGER.debug("Create thread");
 					super.startPolling();
-				} catch (VkApiException e) {
-					e.printStackTrace();
+				} catch (final VkApiException e) {
+					LOGGER.error("VK auth not be pass");
 				}
-			});
+			}, "vkPlatform");
+			thread.start();
 		}
 	}
 
 	public void stopPolling() {
 		try {
 			thread.join();
-		} catch (InterruptedException e) {
-			logger.error("Error: Thread is lock");
+		} catch (final InterruptedException e) {
+			LOGGER.error("Error: Thread is lock");
 		}
 	}
 
 	@Override
 	public List<Message> receiveMessages() {
 		startPolling();
-		var copy = new ArrayList<>(messages);
+		final var copy = new ArrayList<>(messages);
 		messages.clear();
 		return copy;
 	}
 
 	@Override
-	public void send(Message message) {
-		// TODO FUCK
+	public void send(final Message message) {
+		var text = message.getText();
+		var id = Integer.parseInt(message.getConversationId());
+		LOGGER.error(id + "");
+		var resp = vk.messages.send().setMessage(text).setPeerId(id).executeAsync();
+		LOGGER.error(resp.join().toString());
 	}
 }
