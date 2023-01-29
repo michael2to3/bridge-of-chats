@@ -25,8 +25,11 @@ public class VkPlatform extends LongPollBot implements Platform {
 	@Override
 	public void onMessageNew(final MessageNew messageNew) {
 		final var message = messageNew.getMessage();
-		final var sendMessage = new Message(new Date(message.getDate() * 1000L), message.getFromId().toString(),
-				message.getText());
+		final Date date = new Date(message.getDate());
+		final String username = message.getFromId().toString();
+		final String text = message.getText();
+		final String id = String.valueOf(message.getPeerId());
+		final var sendMessage = new Message(date, username, text, id);
 		messages.add(sendMessage);
 	}
 
@@ -40,10 +43,9 @@ public class VkPlatform extends LongPollBot implements Platform {
 		if (thread == null) {
 			thread = new Thread(() -> {
 				try {
-					LOGGER.debug("Create thread");
 					super.startPolling();
 				} catch (final VkApiException e) {
-					LOGGER.error("VK auth not be pass");
+					LOGGER.error("VK auth not be pass - " + e);
 				}
 			}, "vkPlatform");
 			thread.start();
@@ -54,7 +56,7 @@ public class VkPlatform extends LongPollBot implements Platform {
 		try {
 			thread.join();
 		} catch (final InterruptedException e) {
-			LOGGER.error("Error: Thread is lock");
+			LOGGER.error("Error: Thread is lock:" + e.toString());
 		}
 	}
 
@@ -70,7 +72,6 @@ public class VkPlatform extends LongPollBot implements Platform {
 	public void send(final Message message) {
 		var text = message.getText();
 		var id = Integer.parseInt(message.getConversationId());
-		LOGGER.error(id + "");
 		var resp = vk.messages.send().setMessage(text).setPeerId(id).executeAsync();
 		LOGGER.error(resp.join().toString());
 	}
