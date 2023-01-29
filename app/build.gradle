@@ -26,6 +26,7 @@ dependencies {
 
     implementation 'com.github.yvasyliev:java-vk-bots-long-poll-api:3.5.3'
     implementation 'org.telegram:telegrambots:6.4.0'
+    implementation 'org.slf4j:slf4j-simple:2.0.6'
 }
 
 application {
