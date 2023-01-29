@@ -1,8 +1,6 @@
 package bridge.chats.Utils;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -13,16 +11,9 @@ import org.slf4j.LoggerFactory;
 public class Config {
     private final Logger logger = LoggerFactory.getLogger(Config.class);
     private String configpath = System.getProperty("user.dir") + File.separator + "config.properties";
-    private Properties prop;
+    private Properties prop = new Properties();
 
     public Config() {
-        try (var file = new FileInputStream(configpath)) {
-            load(file);
-        } catch (FileNotFoundException e) {
-            logger.error("File does not exists: Config properity file not exists");
-        } catch (IOException e) {
-            logger.error("Permission denied: Config properity file read was error");
-        }
     }
 
     public Config(InputStream stream) {
@@ -54,7 +45,6 @@ public class Config {
     }
 
     private void load(InputStream stream) throws IOException {
-        this.prop = new Properties();
         prop.load(stream);
     }
 
