@@ -3,10 +3,14 @@ package bridge.chats;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import bridge.chats.Object.Message;
 import bridge.chats.Platform.Platform;
 
 class Linker {
+    private static final Logger LOGGER = LoggerFactory.getLogger(Linker.class);
     private Platform source;
     private Platform destination;
     private String sourceIdConversation;
@@ -57,8 +61,13 @@ class Linker {
         while (true) {
             List<Message> messages = source.receiveMessages();
             for (Message message : messages) {
-                message.setConversationId(destinationIdConversation);
-                destination.send(message);
+                if (message.getConversationId().equals(sourceIdConversation)) {
+                    message.setConversationId(destinationIdConversation);
+                    destination.send(message);
+                } else {
+                    LOGGER.debug("Message are messing for this link - " + message.getConversationId() + " "
+                            + sourceIdConversation);
+                }
             }
             try {
                 TimeUnit.SECONDS.sleep(3);
