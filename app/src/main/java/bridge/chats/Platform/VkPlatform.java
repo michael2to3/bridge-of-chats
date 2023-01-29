@@ -13,12 +13,13 @@ import api.longpoll.bots.model.events.messages.MessageNew;
 import bridge.chats.Object.Message;
 
 public class VkPlatform extends LongPollBot implements Platform {
-	private static final Logger LOGGER = LoggerFactory.getLogger(VkPlatform.class);
-	private static String VK_TOKEN;
+	private static final Logger logger = LoggerFactory.getLogger(VkPlatform.class);
+	private static String TOKEN;
 	private List<Message> messages;
+	private Thread thread;
 
 	public VkPlatform(String token) {
-		VK_TOKEN = token;
+		TOKEN = token;
 		messages = new ArrayList<>();
 	}
 
@@ -32,23 +33,32 @@ public class VkPlatform extends LongPollBot implements Platform {
 
 	@Override
 	public String getAccessToken() {
-		return VK_TOKEN;
+		return TOKEN;
 	}
 
 	@Override
 	public void startPolling() {
-		new Thread(() -> {
-			try {
-				super.startPolling();
-			} catch (VkApiException e) {
-				e.printStackTrace();
-			}
-		}).start();
+		if (!thread.isAlive() || thread == null) {
+			thread = new Thread(() -> {
+				try {
+					super.startPolling();
+				} catch (VkApiException e) {
+					e.printStackTrace();
+				}
+			});
+		}
+	}
+
+	public void stopPolling() {
+		try {
+			thread.join();
+		} catch (InterruptedException e) {
+			logger.error("Error: Thread is lock");
+		}
 	}
 
 	@Override
 	public List<Message> receiveMessages() {
-
 		startPolling();
 		var copy = new ArrayList<>(messages);
 		messages.clear();
