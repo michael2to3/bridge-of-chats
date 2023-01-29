@@ -8,10 +8,11 @@ public class Message extends Object {
     public String text;
     public String conversationId;
 
-    public Message(final Date timestamp, final String username, final String text) {
+    public Message(final Date timestamp, final String username, final String text, final String conversationId) {
         this.timestamp = timestamp;
         this.username = username;
         this.text = text;
+        this.conversationId = conversationId;
     }
 
     public String getConversationId() {
