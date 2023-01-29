@@ -29,7 +29,7 @@ jobs:
       with:
         java-version: 17
 
-    - name: Build with Maven
+    - name: Build with Gradle
       run: gradle build
 
     - name: Test with JUnit
