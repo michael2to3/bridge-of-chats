@@ -1,14 +1,13 @@
 package bridge.chats.Platform;
 
-import java.util.List;
-
 import bridge.chats.Object.Message;
+import java.util.List;
 
 /**
  * Service
  */
 public interface Platform {
-    void send(Message message);
+  void send(Message message);
 
-    List<Message> receiveMessages();
+  List<Message> receiveMessages();
 }
