@@ -3,6 +3,8 @@ package bridge.chats.Platform;
 import api.longpoll.bots.LongPollBot;
 import api.longpoll.bots.exceptions.VkApiException;
 import api.longpoll.bots.model.events.messages.MessageNew;
+import api.longpoll.bots.model.objects.basic.Community;
+import api.longpoll.bots.model.objects.basic.User;
 import bridge.chats.Handler.VkHandler;
 import bridge.chats.Object.Message;
 import java.util.ArrayList;
@@ -23,7 +25,8 @@ public class VkPlatform extends LongPollBot implements Platform {
 
   @Override
   public void onMessageNew(final MessageNew messageNew) {
-    var message = handler.generate(messageNew);
+    Message message = handler.generate(messageNew);
+    message.setUsername(getUsername(message.getUsername()));
     messages.add(message);
   }
 
@@ -68,5 +71,25 @@ public class VkPlatform extends LongPollBot implements Platform {
     final String text = handler.formatMessage(message);
     var resp = vk.messages.send().setMessage(text).setPeerId(id).executeAsync();
     LOGGER.error(resp.join().toString());
+  }
+
+  private String getUsername(String id) {
+    String from = "";
+    try {
+      if (id.contains("-")) {
+        Community group = vk.groups.getById()
+            .setGroupId(id.replaceAll("-", ""))
+            .execute()
+            .getResponse().get(0);
+        from = group.getName();
+      } else {
+        User user = vk.users.get().setUserIds(id).execute().getResponse().get(0);
+        from = user.getFirstName() + " " + user.getLastName();
+      }
+    } catch (VkApiException e) {
+      LOGGER.error(e.toString());
+      from = id;
+    }
+    return from;
   }
 }
