@@ -58,10 +58,22 @@ public class VkPlatform extends LongPollBot implements Platform {
   }
 
   @Override
-  public List<Message> receiveMessages() {
+  public List<Message> receiveMessages(String id) {
     startPolling();
-    final var copy = new ArrayList<>(messages);
-    messages.clear();
+    List<Message> copy = new ArrayList<>();
+    for (int i = 0; i < messages.size(); ++i) {
+      Message message = messages.get(i);
+
+      String sourceId = message.getConversationId();
+      if (sourceId.equals(id)) {
+        copy.add(message);
+        messages.remove(i);
+      }
+    }
+    // FIXME clear messages recive after message save very long time
+    if (messages.size() > 5000) { // NOTE very bad design
+      messages.clear();
+    }
     return copy;
   }
 

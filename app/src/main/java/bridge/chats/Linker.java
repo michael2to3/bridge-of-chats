@@ -57,7 +57,7 @@ public class Linker {
 
   public void start() {
     while (true) {
-      List<Message> messages = source.receiveMessages();
+      List<Message> messages = source.receiveMessages(sourceIdConversation);
       for (Message message : messages) {
         if (message.getConversationId().equals(sourceIdConversation)
             || sourceIdConversation == null) {

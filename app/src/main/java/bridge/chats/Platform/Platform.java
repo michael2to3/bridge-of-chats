@@ -9,5 +9,5 @@ import java.util.List;
 public interface Platform {
   public void send(Message message);
 
-  public List<Message> receiveMessages();
+  public List<Message> receiveMessages(String id);
 }

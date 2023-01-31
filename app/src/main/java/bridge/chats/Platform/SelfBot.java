@@ -29,7 +29,7 @@ public class SelfBot implements Platform {
   }
 
   @Override
-  public List<Message> receiveMessages() {
+  public List<Message> receiveMessages(String id) {
     // TODO Auto-generated method stub
     return null;
   }
