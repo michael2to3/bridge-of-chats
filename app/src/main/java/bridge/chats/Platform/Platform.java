@@ -7,7 +7,7 @@ import java.util.List;
  * Service
  */
 public interface Platform {
-  void send(Message message);
+  public void send(Message message);
 
-  List<Message> receiveMessages();
+  public List<Message> receiveMessages();
 }
