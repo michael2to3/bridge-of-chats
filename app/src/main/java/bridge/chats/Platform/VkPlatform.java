@@ -16,7 +16,7 @@ public class VkPlatform extends LongPollBot implements Platform {
   private static final Logger LOGGER = LoggerFactory.getLogger(VkPlatform.class);
   private static final VkHandler handler = new VkHandler();
   private static String TOKEN;
-  private final List<Message> messages = new ArrayList<>();
+  private static final List<Message> messages = new ArrayList<>();
   private Thread thread;
 
   public VkPlatform(final String token) {
