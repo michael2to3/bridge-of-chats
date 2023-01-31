@@ -12,17 +12,24 @@ public class TelegramHandler extends Handler<Update> {
   @Override
   public Message generate(Update update) {
     var umessage = update.getMessage();
+    return generate(umessage);
+  }
 
+  public Message generate(org.telegram.telegrambots.meta.api.objects.Message umessage) {
     final String username = umessage.getFrom().getUserName();
     final Date date = new Date(umessage.getDate());
     final String id = String.valueOf(umessage.getChatId());
     final var message = new Message(date, username, "", id);
 
-    if (update.hasMessage() && umessage.hasText()) {
+    if (umessage.hasText()) {
       final String text = umessage.getText();
       message.setText(text);
     } else {
       message.setText("Oops i don't know what is it");
+    }
+    var reply = umessage.getReplyToMessage();
+    if (reply != null) {
+      message.setText(message.getText() + "\n" + generate(reply));
     }
     return message;
   }
