@@ -1,11 +1,6 @@
-version: "3.8"
+version: '3'
 services:
-  forwarder:
+  app:
+    env_file:
+      - .env
     build: .
-    image: forwarder
-    environment:
-      - VK_TOKEN=your_vk_token
-      - TELEGRAM_TOKEN=your_telegram_token
-      - TELEGRAM_CHANNEL_ID=your_telegram_channel_id
-      - VK_GROUP_ID=123456
-    command: ["java", "-jar", "forwarder.jar"]
