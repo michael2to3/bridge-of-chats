@@ -7,11 +7,21 @@ import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class Linker {
+public class Linker {
   private static final Logger LOGGER = LoggerFactory.getLogger(Linker.class);
   private Platform source;
   private Platform destination;
   private String sourceIdConversation;
+
+  private String destinationIdConversation;
+
+  public Linker(Platform source, Platform destination, String sourceIdConversation,
+      String destinationIdConversation) {
+    this.source = source;
+    this.destination = destination;
+    this.sourceIdConversation = sourceIdConversation;
+    this.destinationIdConversation = destinationIdConversation;
+  }
 
   public Platform getSource() {
     return source;
@@ -45,21 +55,12 @@ class Linker {
     this.destinationIdConversation = destinationIdConversation;
   }
 
-  private String destinationIdConversation;
-
-  public Linker(Platform source, Platform destination, String sourceIdConversation,
-      String destinationIdConversation) {
-    this.source = source;
-    this.destination = destination;
-    this.sourceIdConversation = sourceIdConversation;
-    this.destinationIdConversation = destinationIdConversation;
-  }
-
   public void start() {
     while (true) {
       List<Message> messages = source.receiveMessages();
       for (Message message : messages) {
-        if (message.getConversationId().equals(sourceIdConversation)) {
+        if (message.getConversationId().equals(sourceIdConversation)
+            || sourceIdConversation == null) {
           message.setConversationId(destinationIdConversation);
           destination.send(message);
         } else {
