@@ -39,15 +39,15 @@ public class VkHandler extends Handler<MessageNew> {
 
   private List<Message> generateReply(api.longpoll.bots.model.objects.basic.Message message) {
     List<Message> reply = new ArrayList<>();
-    if (message.hasFwdMessages()) {
-      var fwds = message.getFwdMessages();
+
+    var fwds = message.getFwdMessages();
+    if (fwds != null) {
       for (var fwd : fwds) {
         reply.add(generate(fwd));
       }
     }
-    // FIXME send reply message no more 2 depth
-    if (message.hasReplyMessage()) {
-      var rep = message.getReplyMessage();
+    var rep = message.getReplyMessage();
+    if (rep != null) {
       reply.add(generate(rep));
     }
     return reply;
